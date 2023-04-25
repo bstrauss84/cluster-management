@@ -1,10 +1,12 @@
 # Management cluster banner
 apiVersion: console.openshift.io/v1
-kind: Banner
+kind: ConsoleNotification
 metadata:
-  name: mgmt-cluster-banner
+  name: mgmt-environment-banner
 spec:
   message: "MANAGEMENT CLUSTER"
   position: top
-  color: "#0077ff"
-  textColor: "#ffffff"
+  backgroundColor: "#0000FF"
+  color: "#FFFFFF"
+  linkURL: ""
+  linkText: ""
