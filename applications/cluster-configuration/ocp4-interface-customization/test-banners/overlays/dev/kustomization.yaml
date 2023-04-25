@@ -1,13 +1,26 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources:
-  - ../../base
+
+bases:
+- ../../base
+
 configMapGenerator:
-  - name: custom-console-notification
-    behavior: merge
-    literals:
-      - text=DEV-CLUSTER
-      - backgroundColor=#FFFF00
-      - color=#000000
-      - linkURL=https://example.com
-      - linkText=Learn more
+- name: console-notification-params-dev
+  literals:
+  - text=DEV-CLUSTER
+  - backgroundColor=#FFFF00
+  - color=#000000
+  - linkURL=https://example.com
+  - linkText=Learn more
+
+patches:
+- target:
+    kind: ConsoleNotification
+    name: custom-notification
+  patch: |-
+    spec:
+      text: $(data.values.text)
+      backgroundColor: $(data.values.backgroundColor)
+      color: $(data.values.color)
+      linkURL: $(data.values.linkURL)
+      linkText: $(data.values.linkText)
