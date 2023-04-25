@@ -1,0 +1,11 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleNotification
+metadata:
+  name: env-banner
+spec:
+  text: __BANNER_TEXT__
+  location: BannerTop
+  backgroundColor: __BANNER_BACKGROUND_COLOR__
+  color: __BANNER_TEXT_COLOR__
+  linkURL: __BANNER_LINK_URL__
+  linkText: __BANNER_LINK_TEXT__
