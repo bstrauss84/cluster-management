@@ -4,8 +4,8 @@ kind: ConsoleNotification
 metadata:
   name: mgmt-environment-banner
 spec:
-  message: "MANAGEMENT CLUSTER"
-  position: top
+  text: "MANAGEMENT CLUSTER"
+  location: "BannerTop"
   backgroundColor: "#0000FF"
   color: "#FFFFFF"
   linkURL: ""
