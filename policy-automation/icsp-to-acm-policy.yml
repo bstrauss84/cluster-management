@@ -1,0 +1,46 @@
+---
+- name: Convert ICSP to policy and apply to local ACM cluster
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    icsp_file: "/path/to/ICSP.yaml"
+    policy_file: "/path/to/policy.yaml"
+
+  tasks:
+    - name: Read ICSP file
+      slurp:
+        src: "{{ icsp_file }}"
+      register: icsp_file_content
+
+    - name: Convert ICSP to policy
+      set_fact:
+        policy_object: |
+          - apiVersion: policy.open-cluster-management.io/v1
+            kind: Policy
+            metadata:
+              name: "{{ icsp_file.split('/')[-1].split('.')[0] }}-policy"
+              namespace: default
+            spec:
+              disabled: true
+              policy-templates:
+              - objectDefinition:
+                  apiVersion: policy.open-cluster-management.io/v1
+                  kind: ConfigurationPolicy
+                  metadata:
+                    name: "{{ icsp_file.split('/')[-1].split('.')[0] }}-policy"
+                  spec:
+                    object-templates:
+                    - complianceType: musthave
+                      objectDefinition: "{{ icsp_file_content['content'] | b64decode | from_yaml | to_nice_yaml | regex_replace('^(?m)', '  ') }}"
+                    severity: low
+              remediationAction: enforce
+
+    - name: Write policy file
+      copy:
+        content: "{{ policy_object }}"
+        dest: "{{ policy_file }}"
+
+    - name: Apply policy to local ACM cluster
+      shell: oc apply -f "{{ policy_file }}"
+      ignore_errors: true
