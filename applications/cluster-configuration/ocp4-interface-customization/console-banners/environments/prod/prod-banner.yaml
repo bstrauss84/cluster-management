@@ -1,9 +1,11 @@
 apiVersion: console.openshift.io/v1
 kind: ConsoleNotification
 metadata:
-  name: environment-banner
+  name: prod-environment-banner
 spec:
-  backgroundColor: "#EE0000"
-  color: "#FFF"
+  text: "𝐏𝐑𝐎𝐃𝐔𝐂𝐓𝐈𝐎𝐍 𝐂𝐋𝐔𝐒𝐓𝐄𝐑"
   location: "BannerTop"
-  text: "Production"
+  backgroundColor: "#FF0000"
+  color: "#FFFFFF"
+  linkURL: ""
+  linkText: ""
