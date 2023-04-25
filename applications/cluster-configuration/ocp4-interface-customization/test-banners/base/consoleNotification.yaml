@@ -1,10 +1,10 @@
 apiVersion: console.openshift.io/v1
 kind: ConsoleNotification
 metadata:
-  name: cluster-banner
+  name: custom-notification
 spec:
-  text: $(Text)
-  backgroundColor: $(BackgroundColor)
-  color: $(Color)
-  linkURL: $(LinkURL)
-  linkText: $(LinkText)
+  text: ENVIRONMENT-CLUSTER
+  backgroundColor: #FF0000
+  color: #FFFFFF
+  linkURL: https://example.com
+  linkText: Learn more
