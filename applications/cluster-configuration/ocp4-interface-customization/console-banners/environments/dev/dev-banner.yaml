@@ -1,9 +1,11 @@
 apiVersion: console.openshift.io/v1
 kind: ConsoleNotification
 metadata:
-  name: environment-banner
+  name: dev-environment-banner
 spec:
-  backgroundColor: "#FFFF00"
-  color: "#000"
+  text: "𝐃𝐄𝐕𝐄𝐋𝐎𝐏𝐌𝐄𝐍𝐓 𝐂𝐋𝐔𝐒𝐓𝐄𝐑"
   location: "BannerTop"
-  text: "Internal, Development"
+  backgroundColor: "#FFFF00"
+  color: "#000000"
+  linkURL: ""
+  linkText: ""
