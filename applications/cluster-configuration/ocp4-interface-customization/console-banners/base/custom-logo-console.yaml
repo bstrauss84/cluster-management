@@ -8,3 +8,5 @@ spec:
       key: custom-logo.jpg
       name: custom-logo
     customProductName: Console
+  managementState: Managed
+    
