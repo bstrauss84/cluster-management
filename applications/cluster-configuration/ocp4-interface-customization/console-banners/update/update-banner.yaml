@@ -1,0 +1,16 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleNotification
+metadata:
+  name: environment-patching-banner
+spec:
+  backgroundColor: "#ff6600"
+  color: "#000"
+  location: "BannerTop"
+  text: |
+     This cluster is currently undergoing maintenance. 
+     While this process is meant to be non-disruptive, you may experience some occasional performance issues.
+     Please reach out to the ECP Admins at , if you experience any disruptions. 
+     This message will be removed, and a notification email will be sent once patching has been completed.
+  link:
+    href: 'https://docs.openshift.com/container-platform/4.11/web_console/customizing-the-web-console.html'
+    text: 'Link to patching schedule'
