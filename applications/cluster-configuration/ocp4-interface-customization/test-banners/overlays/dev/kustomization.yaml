@@ -4,23 +4,5 @@ kind: Kustomization
 bases:
 - ../../base
 
-configMapGenerator:
-- name: console-notification-params-dev
-  literals:
-  - text=DEV-CLUSTER
-  - backgroundColor=#FFFF00
-  - color=#000000
-  - linkURL=https://example.com
-  - linkText=Learn more
-
-patches:
-- target:
-    kind: ConsoleNotification
-    name: custom-notification
-  patch: |-
-    spec:
-      text: $(data.values.text)
-      backgroundColor: $(data.values.backgroundColor)
-      color: $(data.values.color)
-      linkURL: $(data.values.linkURL)
-      linkText: $(data.values.linkText)
+resources:
+- dev-consoleNotification.yaml
