@@ -6,5 +6,5 @@ spec:
   text: ENVIRONMENT-CLUSTER
   backgroundColor: #FF0000
   color: #FFFFFF
-  linkURL: https://example.com
-  linkText: Learn more
+  linkURL: ""
+  linkText: ""
