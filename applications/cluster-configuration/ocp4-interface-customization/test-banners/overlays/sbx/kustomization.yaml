@@ -5,4 +5,4 @@ resources:
 - ../../base
 
 patches:
-- path: sbx-consoleNotification.yaml
+- path: consoleNotification.yaml
