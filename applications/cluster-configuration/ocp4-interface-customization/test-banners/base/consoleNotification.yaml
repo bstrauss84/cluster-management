@@ -4,6 +4,7 @@ metadata:
   name: custom-notification
 spec:
   text: ENVIRONMENT-CLUSTER
+  location: "BannerTop"
   backgroundColor: #FF0000
   color: #FFFFFF
   linkURL: ""
