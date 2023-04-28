@@ -3,5 +3,5 @@ kind: Kustomization
 
 resources:
 - consoleNotification.yaml
-- custom-logo-cm.yaml
-- custom-logo-console.yaml
+#- custom-logo-cm.yaml
+#- custom-logo-console.yaml
