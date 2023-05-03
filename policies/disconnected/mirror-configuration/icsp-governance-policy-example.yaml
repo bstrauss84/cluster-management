@@ -1,9 +1,0 @@
-apiVersion: policy.open-cluster-management.io/v1
-kind: Policy
-metadata:
-  name: icsp-governance-policy-example
-spec:
-  remediation:
-    type: inform
-  objectDefinition:
-    url: https://raw.githubusercontent.com/bstrauss84/cluster-management/main/policies/disconnected/mirror-configuration/icsp-example.yaml
