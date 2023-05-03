@@ -6,3 +6,22 @@ metadata:
 data:
   config.yaml: |
     enableUserWorkload: true 
+    prometheusK8s:
+      retention: 15d
+      volumeClaimTemplate:
+        metadata:
+          name: prometheus-pv
+        spec:
+          storageClassName: gp3-csi
+          resources:
+            requests:
+              storage: 40Gi
+    alertmanagerMain:
+      volumeClaimTemplate:
+        metadata:
+          name: alertmanager-pv
+        spec:
+          storageClassName: gp3-csi
+          resources:
+            requests:
+              storage: 20Gi
