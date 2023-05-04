@@ -1,8 +1,0 @@
-apiVersion: console.openshift.io/v1
-kind: ConsoleNotification
-metadata:
-  name: custom-notification
-spec:
-  text: "𝐌𝐀𝐍𝐀𝐆𝐄𝐌𝐄𝐍𝐓 𝐂𝐋𝐔𝐒𝐓𝐄𝐑"
-  backgroundColor: "#0000FF"
-  color: "#FFFFFF"

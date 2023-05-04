@@ -1,9 +1,0 @@
-apiVersion: console.openshift.io/v1
-kind: ConsoleNotification
-metadata:
-  name: custom-notification
-spec:
-  text: "𝐐𝐀 𝐂𝐋𝐔𝐒𝐓𝐄𝐑"
-  location: "BannerTop"
-  backgroundColor: "#008000"
-  color: "#FFFFFF"
