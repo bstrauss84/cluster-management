@@ -1,9 +1,11 @@
 https://access.redhat.com/solutions/6010251
 
 **Examples when Subscription Admin needs to be enabled in RHACM-Gitops scenarios**
+
 Red Hat Advanced Cluster Manager (RHACM) 2.3, 2.4, 2.5
 
 **Issue**
+
 There are three scenarios where Subscription-Admin needs to be applied:
 
 1. Have a Subscription which subscribes to an Application which is creating objects in namespaces other than the Subscription itself.
@@ -13,6 +15,7 @@ There are three scenarios where Subscription-Admin needs to be applied:
 3. Starting with ACM 2.4 Policies residing in git will not be deployed.
 
 **Further explanation.**
+
 1. In usecase one per default all objects are created in the same namespace as the subscription.
 
 2. In usecase two, you would get the following error when checking the status of the subscription:
@@ -89,6 +92,7 @@ subjects:
 **NOTE:** Use the above method for editing the specific RoleBinding open-cluster-management:subscription-admin for ACM 2.4. There is a known issue with RoleBindings created using the oc adm policy method of assigning a Role to a User as well as using any other named RoleBinding. This will be fixed in the ACM 2.5 release.
 
 **Root Cause**
+
 subscription-admin is disabled per default
 
 **Diagnostic Steps**
