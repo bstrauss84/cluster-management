@@ -15,7 +15,8 @@ There are three scenarios where Subscription-Admin needs to be applied:
 **Further explanation.**
 1. In usecase one per default all objects are created in the same namespace as the subscription.
 
-2. In usecase two, you would get the following error when checking the status of the subscription :
+2. In usecase two, you would get the following error when checking the status of the subscription:
+
 `Obj exists and owned by others, backoff`
 
 3. Usecase three is a Security Feature to not simply deploy policies without this additional step. You need to setup Subscription-Admin on the Hub. Use this policy and adjust the user:
