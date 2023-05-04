@@ -28,7 +28,7 @@ https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_managemen
 
 **Create Clusterrole**
 
-Raw
+```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -54,6 +54,7 @@ rules:
   - namespaces
   verbs:
   - '*'
+  ```
 
 **Create ClusterRoleBinding**
 
