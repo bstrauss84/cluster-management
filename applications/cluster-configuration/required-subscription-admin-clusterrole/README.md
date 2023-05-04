@@ -58,7 +58,8 @@ rules:
 
 **Create ClusterRoleBinding**
 
-`apiVersion: rbac.authorization.k8s.io/v1
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: open-cluster-management:subscription-admin
@@ -66,6 +67,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: open-cluster-management:subscription-admin`
+```
 
 Now in a third step you need to add a user to the binding.
 
@@ -75,10 +77,12 @@ In the following we add kube:admin
 
 Add the following if it is not already present in the open-cluster-management:subscription-admin cluster role binding:
 
-`subjects:
+```yaml
+subjects:
 - apiGroup: rbac.authorization.k8s.io
   kind: User
-  name: kube:admin`
+  name: kube:admin
+````
   
 **NOTE:** Use the above method for editing the specific RoleBinding open-cluster-management:subscription-admin for ACM 2.4. There is a known issue with RoleBindings created using the oc adm policy method of assigning a Role to a User as well as using any other named RoleBinding. This will be fixed in the ACM 2.5 release.
 
