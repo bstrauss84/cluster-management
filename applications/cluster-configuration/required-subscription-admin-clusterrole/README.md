@@ -92,5 +92,6 @@ subscription-admin is disabled per default
 **Diagnostic Steps**
 
 `oc get subscription mysubscriptionname -o yaml`
+
 for further troubleshooting check here:
 https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.4/html/troubleshooting/troubleshooting
