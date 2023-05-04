@@ -13,8 +13,6 @@ objects:
       openshift.io/requester: ${PROJECT_REQUESTING_USER}
       zz_pointofcontact: ${PROJECT_LEAD_POC}
     name: ${PROJECT_NAME}
-  spec: {}
-  status: {}
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: RoleBinding
   metadata:
@@ -22,7 +20,6 @@ objects:
       openshift.io/description: Allows all pods in this namespace to
         pull images from this namespace.  It is auto-managed by a controller;
         remove subjects to disable.
-    creationTimestamp: null
     name: system:image-pullers
     namespace: ${PROJECT_NAME}
   roleRef:
@@ -40,7 +37,6 @@ objects:
       openshift.io/description: Allows builds in this namespace to push
         images to this namespace.  It is auto-managed by a controller;
         remove subjects to disable.
-    creationTimestamp: null
     name: system:image-builders
     namespace: ${PROJECT_NAME}
   roleRef:
@@ -58,7 +54,6 @@ objects:
       openshift.io/description: Allows deploymentconfigs in this namespace
         to rollout pods in this namespace.  It is auto-managed by a
         controller; remove subjects to disable.
-    creationTimestamp: null
     name: system:deployers
     namespace: ${PROJECT_NAME}
   roleRef:
@@ -75,7 +70,6 @@ objects:
     annotations:
       openshift.io/description: Allows view permissions to resources
         in this namespace.
-    creationTimestamp: null
     name: view
     namespace: ${PROJECT_NAME}
   roleRef:
