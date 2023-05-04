@@ -23,6 +23,7 @@ There are three scenarios where Subscription-Admin needs to be applied:
 (https://github.com/open-cluster-management-io/policy-collection/blob/main/community/CM-Configuration-Management/policy-configure-subscription-admin-hub.yaml).
 
 **Resolution**
+
 In order to implement both usecases you need to apply the Subscription-Admin:
 ( in case a Subscription was created without being SubscriptionAdmin it needs to be recreated to make the changes effective)
 https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.5/html/applications/managing-applications#granting-subscription-admin-privilege
