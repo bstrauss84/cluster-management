@@ -6,6 +6,9 @@ metadata:
 objects:
 - apiVersion: v1
   kind: LimitRange
+  metadata:
+    name: openshift-resource-limits
+    namespace: ${PROJECT_NAME}
   spec:
     limits:
     - max:
