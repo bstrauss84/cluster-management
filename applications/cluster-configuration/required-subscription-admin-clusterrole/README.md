@@ -28,7 +28,8 @@ https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_managemen
 
 **Create Clusterrole**
 
-`apiVersion: rbac.authorization.k8s.io/v1
+`
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: open-cluster-management:subscription-admin
@@ -52,7 +53,8 @@ rules:
   - secrets
   - namespaces
   verbs:
-  - '*'`
+  - '*'
+  `
 
 **Create ClusterRoleBinding**
 
