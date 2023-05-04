@@ -1,0 +1,32 @@
+- apiVersion: policy.open-cluster-management.io/v1
+  kind: Policy
+  metadata:
+    annotations:
+      policy.open-cluster-management.io/categories: CM Configuration Management, Configure
+        Default Project Template, Day 2 Configuration
+      policy.open-cluster-management.io/controls: CA-2 Security Assessments, CA-7
+        Continuous Monitoring
+      policy.open-cluster-management.io/standards: NIST SP 800-53
+    name: policy-default-project-template-configure
+    namespace: default
+  spec:
+    disabled: false
+    policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-default-project-template-config
+        spec:
+          object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: config.openshift.io/v1
+              kind: Project
+              metadata:
+                name: cluster
+              spec:
+                projectRequestTemplate:
+                  name: project-request-default
+          remediationAction: enforce
+          severity: low
