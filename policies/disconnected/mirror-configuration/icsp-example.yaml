@@ -21,3 +21,6 @@ spec:
   - mirrors:
     - registry.myexample.com:5000/example-repo5
     source: registry.redhat.io/example-repo5
+  - mirrors:
+    - registry.myexample.com:5000/example-repo6
+    source: registry.redhat.io/example-repo6
