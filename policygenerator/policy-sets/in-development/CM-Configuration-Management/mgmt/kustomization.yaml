@@ -3,9 +3,6 @@ kind: Kustomization
 
 resources:
 - ../base
-- input-acm-observability/policy-ocm-console.yaml
-- input-acm-observability/policy-ocm-observability.yaml
-- input-acm-observability/policy-ocm-pull-secret.yaml
 - input-odf/policy-odf.yaml
 
 patches:

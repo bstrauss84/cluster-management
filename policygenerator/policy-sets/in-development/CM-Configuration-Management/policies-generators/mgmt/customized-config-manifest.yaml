@@ -13,34 +13,6 @@ metadata:
   name: custom-logo
   namespace: openshift-config
 ---
-apiVersion: v1
-data:
-  .dockerconfigjson: '{{- if eq (lookup "v1" "Secret" "open-cluster-management" "multiclusterhub-operator-pull-secret").kind
-    "Secret" -}} {{- fromSecret "open-cluster-management" "multiclusterhub-operator-pull-secret"
-    ".dockerconfigjson" -}} {{- else -}} {{- fromSecret "openshift-config" "pull-secret"
-    ".dockerconfigjson" -}} {{- end -}}'
-kind: Secret
-metadata:
-  name: multiclusterhub-operator-pull-secret
-  namespace: open-cluster-management-observability
-type: kubernetes.io/dockerconfigjson
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: thanos-object-storage
-  namespace: open-cluster-management-observability
-stringData:
-  thanos.yaml: |
-    type: s3
-    config:
-      bucket: {{ (lookup "objectbucket.io/v1alpha1" "ObjectBucket" "" "obc-openshift-storage-obc-observability").spec.endpoint.bucketName }}
-      endpoint: {{ (lookup "objectbucket.io/v1alpha1" "ObjectBucket" "" "obc-openshift-storage-obc-observability").spec.endpoint.bucketHost }}
-      insecure: true
-      access_key: {{ fromSecret "openshift-storage" "noobaa-admin" "AWS_ACCESS_KEY_ID" | base64dec }}
-      secret_key: {{ fromSecret "openshift-storage" "noobaa-admin" "AWS_SECRET_ACCESS_KEY" | base64dec }}
-type: Opaque
----
 apiVersion: config.openshift.io/v1
 kind: Project
 metadata:
@@ -48,19 +20,6 @@ metadata:
 spec:
   projectRequestTemplate:
     name: project-request-default
----
-apiVersion: console.openshift.io/v1
-kind: ConsoleLink
-metadata:
-  name: observability
-spec:
-  applicationMenu:
-    imageURL: https://upload.wikimedia.org/wikipedia/commons/3/3a/OpenShift-LogoType.svg
-    section: Red Hat applications
-  href: https://{{ (lookup "route.openshift.io/v1" "Route" "open-cluster-management-observability"
-    "grafana").spec.host }}
-  location: ApplicationMenu
-  text: Red Hat Advanced Cluster Management Observability
 ---
 apiVersion: console.openshift.io/v1
 kind: ConsoleNotification
@@ -81,17 +40,6 @@ metadata:
 spec:
   generateBucketName: obc-observability-bucket
   storageClassName: openshift-storage.noobaa.io
----
-apiVersion: observability.open-cluster-management.io/v1beta2
-kind: MultiClusterObservability
-metadata:
-  name: observability
-spec:
-  observabilityAddonSpec: {}
-  storageConfig:
-    metricObjectStorage:
-      key: thanos.yaml
-      name: thanos-object-storage
 ---
 apiVersion: ocs.openshift.io/v1
 kind: StorageCluster
@@ -147,14 +95,6 @@ spec:
   kind: storagecluster.ocs.openshift.io/v1
   name: ocs-storagecluster
   namespace: openshift-storage
----
-apiVersion: operator.openshift.io/v1
-kind: Console
-metadata:
-  name: cluster
-spec:
-  plugins:
-  - odf-console
 ---
 apiVersion: operator.openshift.io/v1
 kind: Console
