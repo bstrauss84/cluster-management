@@ -6,3 +6,6 @@ resources:
 
 patches:
 - path: consoleNotification.yaml
+- path: default-project-template.yaml
+- path: input-mirror-configuration/icsp-example.yaml
+

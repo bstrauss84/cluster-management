@@ -1,0 +1,230 @@
+apiVersion: v1
+binaryData:
+  custom-logo.jpg: /9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAA8AEcDASIAAhEBAxEB/8QAHAAAAgIDAQEAAAAAAAAAAAAABQYABAECBwMI/8QAMxAAAQMCAwcCBgEEAwAAAAAAAQIDEQAEBSExBhJBUWGBwXGhBxMikbHR8CMyUuEUFfH/xAAZAQADAQEBAAAAAAAAAAAAAAADBAUAAQL/xAAeEQADAAIDAQEBAAAAAAAAAAAAAQIDERIhMQQTYf/aAAwDAQACEQMRAD8A+mAJHOe8z+Z9+1YAB5Ge8z+/fpUAJHOe/wD7514VgAzrM99fzPv0isYiykAlRERJJ0j+feOEUi7S/EK1snFW+FNJvn8wVE/QD68fNV/i9jT9nYM4dar3V3CVOOqBz3BkB3OZ5xXMNn0hawVZmeNL5crl6Qzhwqu2NStsdprtSipxDKFSIbTz60RwjanaFlybpxu4RMlLqB9QPUZ1rZ2yYiAKNs2CC39QE0vzv3Y3+UeaGfBMdtcW/ppBaugJLK8yecf5defSi5AI5z3mfzPv0iuZ3zRZUhxpRQ+0oKQsag0/4Ne/9nhVvdRCnU/UmJhWhHXMd+1NYsvPp+iWbF+b2vC6Oc9Znz54x0qVBMTPWZ8+ePapRgBAZHOe8/vzrwrAMnn76/nz0itgQRrM95/fntWi1kNrUkb6gkkJGe8YmO/v0rGOLfF19Z2tUiCUptWwO8nvnxpZwBKoC5TAOcnSrW1O06tpro3LliizuG0BpSkrKt4SSDmMiKt4FhV4q2+bb35baAkpU0gz9xU66VPaKmPHULTXaGXDblt28DSVAkN78gzlRpi9aKw2XEg8pzpE2UuGBjFwsuNJyJ31KABHpwFHl2CHL0PYfiCrZTmcJQhYPpIofIPwa7DWJo+Y0pTZ3gOVH9hQU7NNA5/1HMtdVHL/AFx7UHDSm2IcdW6YglSQPxRHZa/SytnCkMKIKFu/N4EkyRHHXSj4KSrsV+mKqehoCspnrM+fPHtUrIUIneHOZ8+ePapTxOIMxznvM/mfesDM857zP79+lQAkazPeZ/PntQHFtqsKwt5TNxcfMfH9zbQ3yOc8PXn0rjaXp1S66RzH4sbPDCsYGI2jYTZ3pBVGiXcyfvr961YcLOyr6glSoAI3NT0oxtxtxgOLYHcWbrN0tf8Ae2QAClY0P759KQMJ2iafwxy1t3UqWkjeRopPqKn5VKrc+FXBVOdV6e+EOqQ9vjD2WypU7y5J9JA0pztdy+Nsj/ji2dbXvIKD9PUULw28bWyEFKQoCR1ohc3AUWH0rSl1IggUNtDDrwbLpyEJSrWINFNk7AMWq3lJzXKUyJO7Mx6T94pd2cubG7uC5iF00kN5BtUnePM9OnGnu2dYcaCbZxtSEjdhJmOkDXz2pj54TfJiP1ZWlwSPcc56zPn+T2qVgTrvdZnz549qlOk8T/iLtGvCMPbtLJe7fXYMKBzbRxV6nQHjrwrm1qwlLG+5JJ1J4mre3Lq7jbPES6oq+U58pPRI0/nWqOJrKMIUU5HfRn3FIZrbZSwwplf0o32FpucwnWhS9kEOPB3dKXBopORHenCxAKBImjVm0ggSkUPWwyehUw3AbpsAF92PWfzR22wVQH17y1c1GfamNhpAGSatJSJ0rw4R65sE2dgGQEhAAoky18s7yVFKhoQYIqwUiBVa6UUoTH+Qrvnh5b2NWCYgq7ZWl0j57RhRmN4HQ9P9VKB7NrUMeaQFEJWhQV1gTUqjhp1O2TM8qL0j/9k=
+kind: ConfigMap
+metadata:
+  name: custom-logo
+  namespace: openshift-config
+---
+apiVersion: v1
+data:
+  .dockerconfigjson: '{{- if eq (lookup "v1" "Secret" "open-cluster-management" "multiclusterhub-operator-pull-secret").kind
+    "Secret" -}} {{- fromSecret "open-cluster-management" "multiclusterhub-operator-pull-secret"
+    ".dockerconfigjson" -}} {{- else -}} {{- fromSecret "openshift-config" "pull-secret"
+    ".dockerconfigjson" -}} {{- end -}}'
+kind: Secret
+metadata:
+  name: multiclusterhub-operator-pull-secret
+  namespace: open-cluster-management-observability
+type: kubernetes.io/dockerconfigjson
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: thanos-object-storage
+  namespace: open-cluster-management-observability
+stringData:
+  thanos.yaml: |
+    type: s3
+    config:
+      bucket: {{ (lookup "objectbucket.io/v1alpha1" "ObjectBucket" "" "obc-openshift-storage-obc-observability").spec.endpoint.bucketName }}
+      endpoint: {{ (lookup "objectbucket.io/v1alpha1" "ObjectBucket" "" "obc-openshift-storage-obc-observability").spec.endpoint.bucketHost }}
+      insecure: true
+      access_key: {{ fromSecret "openshift-storage" "noobaa-admin" "AWS_ACCESS_KEY_ID" | base64dec }}
+      secret_key: {{ fromSecret "openshift-storage" "noobaa-admin" "AWS_SECRET_ACCESS_KEY" | base64dec }}
+type: Opaque
+---
+apiVersion: config.openshift.io/v1
+kind: Project
+metadata:
+  name: cluster
+spec:
+  projectRequestTemplate:
+    name: project-request-default
+---
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: observability
+spec:
+  applicationMenu:
+    imageURL: https://upload.wikimedia.org/wikipedia/commons/3/3a/OpenShift-LogoType.svg
+    section: Red Hat applications
+  href: https://{{ (lookup "route.openshift.io/v1" "Route" "open-cluster-management-observability"
+    "grafana").spec.host }}
+  location: ApplicationMenu
+  text: Red Hat Advanced Cluster Management Observability
+---
+apiVersion: console.openshift.io/v1
+kind: ConsoleNotification
+metadata:
+  name: custom-notification
+spec:
+  backgroundColor: '#FF0000'
+  color: '#FFFFFF'
+  location: BannerTop
+  text: "\U0001D40F\U0001D411\U0001D40E\U0001D403\U0001D414\U0001D402\U0001D413\U0001D408\U0001D40E\U0001D40D
+    \U0001D402\U0001D40B\U0001D414\U0001D412\U0001D413\U0001D404\U0001D411"
+---
+apiVersion: observability.open-cluster-management.io/v1beta2
+kind: MultiClusterObservability
+metadata:
+  name: observability
+spec:
+  observabilityAddonSpec: {}
+  storageConfig:
+    metricObjectStorage:
+      key: thanos.yaml
+      name: thanos-object-storage
+---
+apiVersion: operator.openshift.io/v1
+kind: Console
+metadata:
+  name: cluster
+spec:
+  customization:
+    customLogoFile:
+      key: custom-logo.jpg
+      name: custom-logo
+    customProductName: Console
+  managementState: Managed
+---
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageContentSourcePolicy
+metadata:
+  labels:
+    operators.openshift.org/catalog: "true"
+  name: redhat-operator-index
+spec:
+  repositoryDigestMirrors:
+  - mirrors:
+    - registry.myexample.com:5000/example-repo1
+    source: registry.redhat.io/example-repo1
+  - mirrors:
+    - registry.myexample.com:5000/example-repo2
+    source: registry.redhat.io/example-repo2
+  - mirrors:
+    - registry.myexample.com:5000/example-repo3
+    source: registry.redhat.io/example-repo3
+  - mirrors:
+    - registry.myexample.com:5000/example-repo4
+    source: registry.redhat.io/example-repo4
+  - mirrors:
+    - registry.myexample.com:5000/example-repo5
+    source: registry.redhat.io/example-repo5
+  - mirrors:
+    - registry.myexample.com:5000/example-repo6
+    source: registry.redhat.io/example-repo6
+  - mirrors:
+    - registry.myexample.com:5000/example-repo7
+    source: registry.redhat.io/example-repo7
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: example-operators
+  namespace: openshift-marketplace
+spec:
+  displayName: Example Operators
+  image: registry.redhat.io/redhat/community-operator-index:v4.11
+  publisher: Acme Inc.
+  sourceType: grpc
+  updateStrategy:
+    registryPoll:
+      interval: 10m0s
+---
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: project-request-default
+  namespace: openshift-config
+objects:
+- apiVersion: project.openshift.io/v1
+  kind: Project
+  metadata:
+    annotations:
+      openshift.io/description: ${PROJECT_DESCRIPTION}
+      openshift.io/display-name: ${PROJECT_DISPLAYNAME}
+      openshift.io/requester: ${PROJECT_REQUESTING_USER}
+      zz_pointofcontact: ${PROJECT_LEAD_POC}
+    name: ${PROJECT_NAME}
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      openshift.io/description: Allows all pods in this namespace to pull images from
+        this namespace.  It is auto-managed by a controller; remove subjects to disable.
+    name: system:image-pullers
+    namespace: ${PROJECT_NAME}
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: system:image-puller
+  subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: system:serviceaccounts:${PROJECT_NAME}
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      openshift.io/description: Allows builds in this namespace to push images to
+        this namespace.  It is auto-managed by a controller; remove subjects to disable.
+    name: system:image-builders
+    namespace: ${PROJECT_NAME}
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: system:image-builder
+  subjects:
+  - kind: ServiceAccount
+    name: builder
+    namespace: ${PROJECT_NAME}
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      openshift.io/description: Allows deploymentconfigs in this namespace to rollout
+        pods in this namespace.  It is auto-managed by a controller; remove subjects
+        to disable.
+    name: system:deployers
+    namespace: ${PROJECT_NAME}
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: system:deployer
+  subjects:
+  - kind: ServiceAccount
+    name: deployer
+    namespace: ${PROJECT_NAME}
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      openshift.io/description: Allows view permissions to resources in this namespace.
+    name: view
+    namespace: ${PROJECT_NAME}
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: view
+  subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: ${PROJECT_NAME}
+- apiVersion: v1
+  kind: LimitRange
+  metadata:
+    name: openshift-resource-limits
+    namespace: ${PROJECT_NAME}
+  spec:
+    limits:
+    - max:
+        openshift.io/image-tags: "12"
+      type: openshift.io/ImageStream
+parameters:
+- name: PROJECT_NAME
+- name: PROJECT_DISPLAYNAME
+- name: PROJECT_DESCRIPTION
+- name: PROJECT_LEAD_POC
+- name: PROJECT_REQUESTING_USER

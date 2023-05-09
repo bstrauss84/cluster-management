@@ -19,6 +19,6 @@ policyDefaults:
 placementBindingDefaults:
   name: "binding-mgmt"
 policies:
-  - name: banner-pol-mgmt
+  - name: config-pol-mgmt
     manifests:
       - path: customized-config-manifest.yaml

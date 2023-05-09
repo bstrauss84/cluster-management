@@ -1,0 +1,29 @@
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageContentSourcePolicy
+metadata:
+  labels:
+    operators.openshift.org/catalog: "true"
+  name: redhat-operator-index
+spec:
+  repositoryDigestMirrors:
+  - mirrors:
+    - registry.myexample.com:5000/example-repo1
+    source: registry.redhat.io/example-repo1
+  - mirrors:
+    - registry.myexample.com:5000/example-repo2
+    source: registry.redhat.io/example-repo2
+  - mirrors:
+    - registry.myexample.com:5000/example-repo3
+    source: registry.redhat.io/example-repo3
+  - mirrors:
+    - registry.myexample.com:5000/example-repo4
+    source: registry.redhat.io/example-repo4
+  - mirrors:
+    - registry.myexample.com:5000/example-repo5
+    source: registry.redhat.io/example-repo5
+  - mirrors:
+    - registry.myexample.com:5000/example-repo6
+    source: registry.redhat.io/example-repo6
+  - mirrors:
+    - registry.myexample.com:5000/example-repo7
+    source: registry.redhat.io/example-repo7

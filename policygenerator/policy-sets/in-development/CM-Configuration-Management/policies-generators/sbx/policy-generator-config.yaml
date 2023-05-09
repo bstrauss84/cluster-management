@@ -13,12 +13,12 @@ policyDefaults:
   standards:
     - NIST SP 800-53
   placement:
-    name: placement-dev
+    name: placement-sbx
     clusterSelectors:
-      environment: dev
+      environment: sbx
 placementBindingDefaults:
-  name: "binding-dev"
+  name: "binding-sbx"
 policies:
-  - name: banner-pol-dev
+  - name: config-pol-sbx
     manifests:
       - path: customized-config-manifest.yaml
