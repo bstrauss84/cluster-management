@@ -8,7 +8,7 @@ policyDefaults:
   controls: 
     - CM-2 Baseline Configuration
   namespace: policies
-  remediationAction: inform
+  remediationAction: enforce
   severity: medium
   standards:
     - NIST SP 800-53
