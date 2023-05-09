@@ -7,5 +7,7 @@ spec:
   location: "BannerTop"
   backgroundColor: #FF0000
   color: #FFFFFF
-  linkURL: ""
-  linkText: ""
+  text: ''
+  link:
+    href: ''
+    text: ''
