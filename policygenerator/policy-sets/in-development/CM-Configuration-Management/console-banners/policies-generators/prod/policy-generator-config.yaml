@@ -1,0 +1,24 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: config-management-policy
+policyDefaults:
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  namespace: policies
+  remediationAction: enforce
+  severity: medium
+  standards:
+    - NIST SP 800-53
+  placement:
+    name: placement-prod
+    clusterSelectors:
+      environment: prod
+placementBindingDefaults:
+  name: "binding-prod"
+policies:
+  - name: banner-pol-prod
+    manifests:
+      - path: customized-config-manifest.yaml

@@ -1,0 +1,8 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleNotification
+metadata:
+  name: custom-notification
+spec:
+  text: "𝐏𝐑𝐎𝐃𝐔𝐂𝐓𝐈𝐎𝐍 𝐂𝐋𝐔𝐒𝐓𝐄𝐑"
+  backgroundColor: "#FF0000"
+  color: "#FFFFFF"
