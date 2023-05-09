@@ -5,9 +5,6 @@ resources:
 - consoleNotification.yaml
 - custom-logo-cm.yaml
 - custom-logo-console.yaml
-- policy-ocm-console.yaml
-- policy-ocm-observability.yaml
-- policy-ocm-pull-secret.yaml
 - project-config.yaml
 - default-project-template.yaml
 - input-mirror-configuration/icsp-example.yaml

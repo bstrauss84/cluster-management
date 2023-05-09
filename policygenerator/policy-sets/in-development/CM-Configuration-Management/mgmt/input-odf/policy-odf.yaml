@@ -88,11 +88,3 @@ metadata:
 spec:
   generateBucketName: obc-observability-bucket
   storageClassName: openshift-storage.noobaa.io
----
-apiVersion: operator.openshift.io/v1
-kind: Console
-metadata:
-  name: cluster
-spec:
-  plugins:
-  - odf-console

@@ -1,4 +1,11 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    openshift.io/cluster-monitoring: "true"
+  name: openshift-storage
+---
+apiVersion: v1
 binaryData:
   custom-logo.jpg: /9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAA8AEcDASIAAhEBAxEB/8QAHAAAAgIDAQEAAAAAAAAAAAAABQYABAECBwMI/8QAMxAAAQMCAwcCBgEEAwAAAAAAAQIDEQAEBSExBhJBUWGBwXGhBxMikbHR8CMyUuEUFfH/xAAZAQADAQEBAAAAAAAAAAAAAAADBAUAAQL/xAAeEQADAAIDAQEBAAAAAAAAAAAAAQIDERIhMQQTYf/aAAwDAQACEQMRAD8A+mAJHOe8z+Z9+1YAB5Ge8z+/fpUAJHOe/wD7514VgAzrM99fzPv0isYiykAlRERJJ0j+feOEUi7S/EK1snFW+FNJvn8wVE/QD68fNV/i9jT9nYM4dar3V3CVOOqBz3BkB3OZ5xXMNn0hawVZmeNL5crl6Qzhwqu2NStsdprtSipxDKFSIbTz60RwjanaFlybpxu4RMlLqB9QPUZ1rZ2yYiAKNs2CC39QE0vzv3Y3+UeaGfBMdtcW/ppBaugJLK8yecf5defSi5AI5z3mfzPv0iuZ3zRZUhxpRQ+0oKQsag0/4Ne/9nhVvdRCnU/UmJhWhHXMd+1NYsvPp+iWbF+b2vC6Oc9Znz54x0qVBMTPWZ8+ePapRgBAZHOe8/vzrwrAMnn76/nz0itgQRrM95/fntWi1kNrUkb6gkkJGe8YmO/v0rGOLfF19Z2tUiCUptWwO8nvnxpZwBKoC5TAOcnSrW1O06tpro3LliizuG0BpSkrKt4SSDmMiKt4FhV4q2+bb35baAkpU0gz9xU66VPaKmPHULTXaGXDblt28DSVAkN78gzlRpi9aKw2XEg8pzpE2UuGBjFwsuNJyJ31KABHpwFHl2CHL0PYfiCrZTmcJQhYPpIofIPwa7DWJo+Y0pTZ3gOVH9hQU7NNA5/1HMtdVHL/AFx7UHDSm2IcdW6YglSQPxRHZa/SytnCkMKIKFu/N4EkyRHHXSj4KSrsV+mKqehoCspnrM+fPHtUrIUIneHOZ8+ePapTxOIMxznvM/mfesDM857zP79+lQAkazPeZ/PntQHFtqsKwt5TNxcfMfH9zbQ3yOc8PXn0rjaXp1S66RzH4sbPDCsYGI2jYTZ3pBVGiXcyfvr961YcLOyr6glSoAI3NT0oxtxtxgOLYHcWbrN0tf8Ae2QAClY0P759KQMJ2iafwxy1t3UqWkjeRopPqKn5VKrc+FXBVOdV6e+EOqQ9vjD2WypU7y5J9JA0pztdy+Nsj/ji2dbXvIKD9PUULw28bWyEFKQoCR1ohc3AUWH0rSl1IggUNtDDrwbLpyEJSrWINFNk7AMWq3lJzXKUyJO7Mx6T94pd2cubG7uC5iF00kN5BtUnePM9OnGnu2dYcaCbZxtSEjdhJmOkDXz2pj54TfJiP1ZWlwSPcc56zPn+T2qVgTrvdZnz549qlOk8T/iLtGvCMPbtLJe7fXYMKBzbRxV6nQHjrwrm1qwlLG+5JJ1J4mre3Lq7jbPES6oq+U58pPRI0/nWqOJrKMIUU5HfRn3FIZrbZSwwplf0o32FpucwnWhS9kEOPB3dKXBopORHenCxAKBImjVm0ggSkUPWwyehUw3AbpsAF92PWfzR22wVQH17y1c1GfamNhpAGSatJSJ0rw4R65sE2dgGQEhAAoky18s7yVFKhoQYIqwUiBVa6UUoTH+Qrvnh5b2NWCYgq7ZWl0j57RhRmN4HQ9P9VKB7NrUMeaQFEJWhQV1gTUqjhp1O2TM8qL0j/9k=
 kind: ConfigMap
@@ -66,6 +73,15 @@ spec:
   text: "\U0001D40C\U0001D400\U0001D40D\U0001D400\U0001D406\U0001D404\U0001D40C\U0001D404\U0001D40D\U0001D413
     \U0001D402\U0001D40B\U0001D414\U0001D412\U0001D413\U0001D404\U0001D411"
 ---
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: obc-observability
+  namespace: openshift-storage
+spec:
+  generateBucketName: obc-observability-bucket
+  storageClassName: openshift-storage.noobaa.io
+---
 apiVersion: observability.open-cluster-management.io/v1beta2
 kind: MultiClusterObservability
 metadata:
@@ -76,6 +92,69 @@ spec:
     metricObjectStorage:
       key: thanos.yaml
       name: thanos-object-storage
+---
+apiVersion: ocs.openshift.io/v1
+kind: StorageCluster
+metadata:
+  annotations:
+    uninstall.ocs.openshift.io/cleanup-policy: delete
+    uninstall.ocs.openshift.io/mode: graceful
+  name: ocs-storagecluster
+  namespace: openshift-storage
+spec:
+  arbiter: {}
+  encryption:
+    kms: {}
+  externalStorage: {}
+  managedResources:
+    cephBlockPools: {}
+    cephCluster: {}
+    cephConfig: {}
+    cephDashboard: {}
+    cephFilesystems: {}
+    cephObjectStoreUsers: {}
+    cephObjectStores: {}
+    cephToolbox: {}
+  mirroring: {}
+  nodeTopologies: {}
+  storageDeviceSets:
+  - config: {}
+    count: 1
+    dataPVCTemplate:
+      metadata: {}
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Ti
+        storageClassName: gp3-csi
+        volumeMode: Block
+      status: {}
+    name: ocs-deviceset-gp3-csi
+    placement: {}
+    portable: true
+    preparePlacement: {}
+    replica: 3
+    resources: {}
+---
+apiVersion: odf.openshift.io/v1alpha1
+kind: StorageSystem
+metadata:
+  name: ocs-storagecluster-storagesystem
+  namespace: openshift-storage
+spec:
+  kind: storagecluster.ocs.openshift.io/v1
+  name: ocs-storagecluster
+  namespace: openshift-storage
+---
+apiVersion: operator.openshift.io/v1
+kind: Console
+metadata:
+  name: cluster
+spec:
+  plugins:
+  - odf-console
 ---
 apiVersion: operator.openshift.io/v1
 kind: Console
@@ -129,6 +208,26 @@ spec:
   updateStrategy:
     registryPoll:
       interval: 10m0s
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: odf-operator
+  namespace: openshift-storage
+spec:
+  installPlanApproval: Automatic
+  name: odf-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+---
+apiVersion: operators.coreos.com/v1alpha2
+kind: OperatorGroup
+metadata:
+  name: openshift-storage-operatorgroup
+  namespace: openshift-storage
+spec:
+  targetNamespaces:
+  - openshift-storage
 ---
 apiVersion: template.openshift.io/v1
 kind: Template
