@@ -1,11 +1,15 @@
-apiVersion: route.openshift.io/v1
 kind: Route
+apiVersion: route.openshift.io/v1
 metadata:
-  name: mario
+  name: wildwest-app
+  namespace: wildwest
   labels:
-    name: mario
+    app: wildwest
 spec:
-  path: "/"
   to:
     kind: Service
-    name: mario
+    name: wildwest
+    weight: 100
+  port:
+    targetPort: wildwest
+  wildcardPolicy: None
