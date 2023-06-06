@@ -1,0 +1,82 @@
+---
+# tasks file for generate-image-signature-configmap
+
+- set_fact:
+    digest_algorithm: "{{ digest | regex_search(regexp, '\\1') | first }}"
+  vars:
+    regexp: '^(.+?):' 
+
+- debug:
+    var: digest_algorithm
+
+- set_fact:
+    digest_encoded: "{{ digest | regex_search(regexp, '\\1') | first }}"
+  vars:
+    regexp: ':(.*)'
+
+- debug:
+    var: digest_encoded
+
+- name: Obtain Base64 Encrypted Signature String
+  shell:
+    cmd: |
+
+        curl -s "https://mirror.openshift.com/pub/openshift-v4/signatures/openshift/release/{{ digest_algorithm }}={{ digest_encoded }}/signature-1" | \
+        base64 -w0
+
+  environment: "{{ proxy_env }}"
+  register: sig_base64_out
+
+- set_fact:
+    signature_base64: "{{ sig_base64_out.stdout }}"
+
+- debug:
+    var: signature_base64
+
+- name: Create Checksum Base Directory 
+  file:
+    path: '{{ checksum_base }}'
+    state: directory
+    mode: 0770
+  become: false
+
+- name: Create Image Signature Configmap
+  template:
+    src: templates/image-signature-configmap.yaml.j2
+    dest: "{{ checksum_base }}/checksum-{{ ocp_ver }}.yaml"
+  become: false
+
+- name: Apply Image Signature Configmap to Cluster
+  shell:
+    "{{ binary_base }}/{{ ocp_ver }}/oc apply -f {{ checksum_base }}/checksum-{{ ocp_ver }}.yaml"
+  when: not (dry_run | default(true) | bool)
+  become: false
+
+- name: Dry-Run Apply Image Signature Configmap to Cluster
+  shell:
+    cmd: |
+
+        echo "The command that would be ran, is '{{ binary_base }}/{{ ocp_ver }}/oc apply -f {{ checksum_base }}/checksum-{{ ocp_ver }}.yaml'"
+
+  register: test_cm_apply_command_out
+  when: (dry_run | default(true) | bool)
+
+- set_fact:
+    test_cm_apply_command: "{{ test_cm_apply_command_out.stdout }}"
+  when: (dry_run | default(true) | bool)
+
+- debug:
+    var: test_cm_apply_command
+  when: (dry_run | default(true) | bool)
+
+#### After getting k8s module working would use something like the below task instead of the one above ####	
+#- name: Create Image Signature ConfigMap in OCP cluster
+#  delegate_to: localhost
+#  k8s:
+#    state: present
+#    name: release-image-"{{ ocp_ver }}"
+#    namespace: openshift-config-managed
+#    wait: true
+#    kubeconfig: "{{ kubeconfig }}"
+#    validate_certs: '{{ kube_ssl_enabled }}'
+#    definition: "{{ lookup('template', 'templates/image-signature-configmap.yaml.j2') }}"

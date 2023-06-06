@@ -1,0 +1,25 @@
+---
+# tasks file for configure_update_service_operator
+
+- name: Define OCP version "{{ ocp_ver }}" in Cincinnati Graph Data Channel "{{ channel }}" if undefined
+  lineinfile:
+    state: present
+    path: "{{ cincinnati_base_dir }}/channels/{{ channel }}.yaml"
+    line: "- {{ ocp_ver }}"
+
+- name: Build New Cincinnati Graph Data Container Image
+  shell: "podman build -f {{ cincinnati_base_dir }}/Dockerfile -t {{ mirror_registry }}:{{ mirror_registry_prt }}/cincinnati/cincinnati-graph-data-container:latest"
+  when: (configure_update_operator | default(false) | bool) and (not dry_run | default(true) | bool)
+
+
+- name: Push New Cincinnati Graph Data Container Image to Internal Registry
+  shell: "podman push {{ mirror_registry }}:{{ mirror_registry_prt }}/cincinnati/cincinnati-graph-data-container:latest --authfile={{ pull_secret }}"
+  when: (configure_update_operator | default(false) | bool) and (not dry_run | default(true) | bool)
+
+
+- name: Restart the Update Service Operator "service" pods
+  shell: "for p in $(oc get pods -n openshift-update-service --no-headers | awk '{print $1}' | grep service | grep -v operator); do oc delete pod $p -n openshift-update-service; done"
+  delegate_to: localhost
+  become: false
+  run_once: true
+  when: (configure_update_operator | default(false) | bool) and (not dry_run | default(true) | bool)

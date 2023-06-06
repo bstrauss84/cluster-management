@@ -1,0 +1,22 @@
+---
+# tasks file for mirror_ocp_images
+
+- name: Mirror OpenShift {{ ocp_ver }} Cluster Images to Registry
+#  shell: echo Here we would run the oc mirror command
+  shell:  'oc-mirror --continue-on-error --skip-missing --skip-cleanup --skip-verification --config "{{ file_path }}"/{{ imageset_file }} docker://{reg};'
+# Changed this value 12/15
+  async: 18000
+  poll: 0
+  run_once: true
+  register: status_check
+  become: true
+  environment: "{{ proxy_env }}"
+  when: (mirror_to_reg | default(false) | bool) and (not dry_run | default(true) | bool)
+
+- name: Check on oc-mirror status
+  async_status:
+    jid: "{{ status_check.ansible_job_id }}"
+  until: check_result.finished
+  register: check_result
+  retries: 1000
+  delay: 30

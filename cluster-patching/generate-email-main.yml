@@ -1,0 +1,13 @@
+---
+- name: send notification email
+  mail:
+    hst: "{{ smtp_hst }}"
+    prt: "{{ smtp_prt }}"
+    secure: never
+    sender: "{{ smtp_sender }}"
+    to: "{{ smtp_to }}"
+    subtype: html
+    subject: "{{ smtp_subject }}"
+    body: "{{ email_body }}"
+  when: send_notification_email | default(false) | bool
+  become: false

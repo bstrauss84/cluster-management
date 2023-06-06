@@ -1,0 +1,105 @@
+---
+# tasks file for stage-oc-binaries
+#
+#- name: Create Directory for OCP {{ ocp_ver }} Binaries
+#  file:
+ #   path: '{{ binary_base }}/{{ ocp_ver }}'
+  #  state: directory
+   # mode: 0770
+  # become: false
+  
+#- name: Create Directory for OCP mirror Binaries
+#  file:
+#    path: '/tmp'
+#    state: directory
+ #   mode: 0755
+ # become: true
+
+## Unless/Until we find a way to speed up image transfer, we should probably not use the below task to 
+## pull the binaries as it takes an average of 35 minutes to complete due to proxy packet inspection.
+## Instead or until then, pull the tar.gz file to the {{ binary_base }} directory before running this role 
+## make sure it's named "openshift-client-linux-{{ ocp_ver }}.tar.gz beforehand.  Then run the role/playbook
+## with the below task commented out.
+
+- name: Check current oc binaries version
+  shell: "oc version 2>&1 | head -n 1 | awk '{print $3}'"
+  register: current_oc_ver
+- debug: 
+    var: current_oc_ver.stdout
+  
+  
+- name: Check current oc-mirror binary version
+  shell: oc-mirror version --short | awk '{print $3}' | cut -d - -f 1
+  register: current_oc_mir_ver
+- debug:
+    var: current_oc_mir_ver.stdout
+    
+- name: check ansible version
+  shell: ansible --version
+  register: a_ver
+- debug:
+    var: a_ver.stdout
+  
+  
+# https_proxy=proxy.web.irs.gov:8080
+
+- name: Download oc Binaries for OCP version "{{ ocp_ver }}"
+  get_url: 
+    url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable-{{ xy_version }}/openshift-client-linux.tar.gz"
+    validate_certs: no
+    dest: '/tmp'
+    mode: '0660'
+  become: false
+  environment: "{{ proxy_env }}" 
+  when: (ocp_ver != current_oc_ver)
+   
+- name: Download oc-mirror Binaries for OCP version "{{ ocp_ver }}"
+  get_url: 
+    url: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable-{{ xy_version }}/oc-mirror.tar.gz"
+    validate_certs: no
+    dest: '/tmp'
+    mode: '0660'
+  become: false
+  environment: "{{ proxy_env }}" 
+  when: (ocp_ver != current_oc_mir_ver)
+  
+- name: Extract/Unarchive oc-mirror Binaries
+  unarchive:
+    src: '/tmp/oc-mirror.tar.gz'
+    dest: '/usr/local/sbin'
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: yes
+  become: true
+  when: (ocp_ver != current_oc_mir_ver)
+   #add debug statement: which oc & client version
+  register: oc_mr_file
+- debug:
+    var: oc_mr_file
+  
+- name: Extract/Unarchive oc Binaries
+  unarchive:
+    src: '/tmp/openshift-client-linux.tar.gz'
+    dest: '/usr/local/sbin'
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: yes
+  become: true
+  when: (ocp_ver != current_oc_ver)
+  register: oc_bin_file
+- debug:
+    var: oc_bin_file
+  
+- name: Perform Cleanup
+  file:
+    path: '/tmp/openshift-client-linux.tar.gz'
+    state: absent
+  when: (ocp_ver != current_oc_ver)
+  
+- name: Perform Cleanup
+  file:
+    path: '/tmp/oc-mirror.tar.gz'
+    state: absent
+  when: (ocp_ver != current_oc_mir_ver)

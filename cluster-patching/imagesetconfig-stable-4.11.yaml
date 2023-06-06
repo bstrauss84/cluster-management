@@ -1,0 +1,66 @@
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v1alpha2
+storageConfig:
+  registry:
+  #references blobs that already exist and skips blobs to make image pull faster
+  #disabled cleanup of outdated blobs that are no longer referenced
+  #if --ignore-history is included, prolonged image pull as its pulling image every time
+    imageURL: {reg}/oc-mirror:4.11
+    skipTLS: true
+mirror:
+  platform:
+    channels:
+    - name: stable-4.11
+      type: ocp
+#update for every release
+      minVersion: 4.11.18
+      maxVersion: 4.11.18
+#    graph: true
+  operators:
+  #if a subset of operators/images is pulled, change target name as it will overwrite all existing operators/images
+  - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.11
+    targetName: consolidated-4-11-official-operator-catalog
+    packages:
+    - name: advanced-cluster-management
+    - name: multicluster-engine
+    - name: ansible-automation-platform-operator
+    - name: compliance-operator
+    - name: jaeger-product
+    - name: local-storage-operator
+    - name: cluster-logging
+    - name: elasticsearch-operator
+    - name: devworkspace-operator
+      channels: 
+        - name: fast
+    - name: web-terminal
+    - name: ocs-operator
+    - name: cincinnati-operator
+    - name: kiali-ossm
+    - name: servicemeshoperator
+    - name: amq-broker-rhel8
+    - name: mcg-operator
+    - name: datagrid
+    - name: odf-operator
+    - name: eap
+    - name: serverless-operator
+    - name: vertical-pod-autoscaler
+    - name: nfd
+    - name: cluster-kube-descheduler-operator
+    - name: node-healthcheck-operator
+    - name: red-hat-camel-k
+#    - name: poison-pill-manager
+    - name: self-node-remediation
+    - name: amq-streams
+    - name: amq7-interconnect-operator
+    - name: container-security-operator
+    - name: rhacs-operator
+  - catalog: registry.redhat.io/redhat/certified-operator-index:v4.11
+    targetName: consolidated-4-11-certified-operator-catalog
+    packages:
+    - name: redis-enterprise-operator-cert
+  additionalImages:
+  #update splunk images for every release
+  - name: docker.io/splunk/fluentd-hec:1.3.0
+  - name: docker.io/splunk/kube-objects:1.2.0
+  - name: registry.redhat.io/rhel7/rhel-tools:7.9-52
+  - name: registry.redhat.io/openshift4/ose-cli:v4.11

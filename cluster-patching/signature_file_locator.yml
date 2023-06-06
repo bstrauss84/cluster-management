@@ -1,0 +1,26 @@
+---  
+- name: Login to OCP4 cluster
+  shell: 'oc login --token={{ env.token }} --server=https://api.ecp-{{ env.ocp4_env }}.{fqn}' #ensure that  is logged into mgmt cluster
+  become: true
+  run_once: true
+  #no_log: true
+  
+  
+- name: List Directory
+  shell: ' ls -tr {{file_path}}/oc-mirror-workspace/ | grep results | tail -n 1'
+  become: true
+  run_once: true
+  register: results_dir
+- debug:
+    var: results_dir
+  
+- name: Loop for each signature file
+  shell: ' for signaturejsonfile in $(ls {{file_path}}/oc-mirror-workspace/{{ results_dir.stdout }}/release-signatures); do oc apply -f {{file_path}}/oc-mirror-workspace/{{ results_dir.stdout }}/release-signatures/$signaturejsonfile -n openshift-config-managed; done;'
+  become: true
+  run_once: true
+  
+  
+- name: Delete Openshift Marketplace pods
+  shell: 'for p in $(oc get pods -n openshift-marketplace --no-headers -o custom-columns=POD:.metadata.name | grep operator); do oc delete pod $p -n openshift-marketplace; done'
+  become: true
+  run_once: true

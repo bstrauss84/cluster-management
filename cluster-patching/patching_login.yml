@@ -1,0 +1,106 @@
+---
+- name: Cluster Patching Login Loop
+  hosts: localhost
+  become: true
+  vars:
+#    ocp_ver: ''
+    xy_version: '4.11'
+    arch: 'x86_64'
+    file_path: '../files'
+    imageset_file: imagesetconfig-stable-4.11.yaml
+
+    pull_secret: /opt/ecp/allregtokens2.json
+    cincinnati_base_dir: /opt/ecp/ecp-ocp4-virt/cincinnati/cincinnati-graph-data-master
+    channel: "stable-{{ xy_version }}"
+    
+    # email vars
+    #update_dates:
+    mem_date: ''
+    smtp_ht: 
+    smtp_pt: 
+    smtp_sender: o
+    smtp_subject: 'Upcoming OpenShift Patching - Notification Email'
+    email_body: <p>This email is to notify you of planned OpenShift patching to occur in the following weeks. This patching is meant to be non-intrusive and should not result in any outages. If you experience any issues, please contact the ECP Admins<br> The OpenShift updates are currently scheduled for the following dates:<br> <b>Memps Dev</b> "</p>
+    smtp_to: 
+    
+    #binaries 
+    dry_run: false
+    copy_stage_binaries: false
+    mirror_openshift_cluster_images: false
+    generate_image_signature_cm: false 
+    send_notification_email: false
+    configure_update_operator: false  
+    
+    proxy_env:
+      HTTPS_PROXY: p
+      NO_PROXY: v
+      
+    #double check the bools
+ vars_files: 
+  #ask Devon if these are used
+   - ../../../ansible/ocp4-objects/compliance-operator/ocp4_vars.yml
+   - ../../../ansible/mgmt_vars.yaml
+ 
+  tasks:
+    
+  - name: Discover Latest (Stable) OpenShift Patch Version
+    shell:
+      cmd: |
+        curl -ks https://mirror.openshift.com/pub/openshift-v4/{{ arch }}/clients/ocp/stable-{{ xy_version }}/release.txt | \
+        grep Name | \
+        awk '{$1= ""; print $0}' | \
+        sed 's/ //g'
+    environment: "{{ proxy_env }}"
+    register: latest_out
+    when: not ocp_ver_tower
+    tags: test
+
+  - set_fact:
+      ocp_ver: "{{ latest_out.stdout }}"
+#     when: not ocp_ver_tower
+#    when: ocp_ver is not defined
+    when: (ocp_ver_tower is not defined) or (ocp_ver_tower == "") or  (ocp_ver_tower == '')
+
+  - set_fact:
+      ocp_ver: "{{ ocp_ver_tower }}"
+    when: (ocp_ver_tower is defined) and (ocp_ver_tower != "") and (ocp_ver_tower != '')
+  
+  - debug:
+      var: ocp_ver
+
+    
+  - name: copy-and-stage-oc-binaries ##TODO: cannot find the oc binary to download
+    import_role:
+      name: stage-oc-binaries
+    when: copy_stage_binaries | default(false) | bool
+    tags: test
+  
+   
+  - name: Mirror OpenShift Cluster Images
+    import_role:
+      name: mirror-ocp-images
+    when: mirror_openshift_cluster_images | default(false) | bool
+    tags: test
+
+    
+  - name: Include tasks file
+    include_tasks:
+      file: signature_file_locator.yml
+    loop: "{{ envs }}"
+    loop_control:
+      loop_var: env
+    run_once: true
+    when: generate_image_signature_cm | default(false) | bool
+    tags: test
+    
+  - name: Include email generation role
+    import_role:
+      name: generate-email-notification
+    when: send_notification_email | default(false) | bool
+    run_once: true
+    become: false
+    
+  - name: configure-update-service-operator
+    import_role:
+      name: configure-update-service-operator
+    when: configure_update_operator | default(false) | bool
