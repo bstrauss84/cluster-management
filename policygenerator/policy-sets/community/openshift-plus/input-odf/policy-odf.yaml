@@ -68,10 +68,10 @@ spec:
         resources:
           requests:
             storage: 2Ti
-        storageClassName: gp2
+        storageClassName: gp3
         volumeMode: Block
       status: {}
-    name: ocs-deviceset-gp2
+    name: ocs-deviceset-gp3
     placement: {}
     portable: true
     preparePlacement: {}
