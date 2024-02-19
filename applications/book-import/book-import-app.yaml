@@ -56,3 +56,5 @@ spec:
   to:
     kind: Service
     name: book-import
+  port:
+    targetPort: 8080
